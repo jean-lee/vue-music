@@ -1,5 +1,5 @@
 export function hasClass(el, className) {
-  let reg = new RegExp('(^|\\s)' + className + '(\\s|$)')
+  let reg = new RegExp('(^|\\s)' + className + '(\\s|$)') // 转译提取对应的className
   return reg.test(el.className)
 }
 
