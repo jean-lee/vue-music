@@ -27,16 +27,24 @@
     mounted() { // dom ready 初始化-避免better-scroll初始化无法滚动
       setTimeout(() => {
         this._setSliderWidth()
-      // this._initDots()
+        this._initDots()
         this._initSlider()
 
-      // if (this.autoPlay) {
-      //   this._play()
-      // }
-      }, 200)
+        if (this.autoPlay) {
+          this._play()
+        }
+      }, 20)
+
+      window.addEventListener('resize', () => { // 页面窗口切换，重新获取视口宽度
+        if (!this.slider) {
+          return
+        }
+        this._setSliderWidth(true)
+        this.slider.refresh()
+      })
     },
     methods: {
-      _setSliderWidth() { // isResize
+      _setSliderWidth(isResize) {
         this.children = this.$refs.sliderGroup.children
 
         let width = 0
@@ -48,9 +56,9 @@
           child.style.width = sliderWidth + 'px'
           width += sliderWidth
         }
-        // if (this.loop && isResize) {
-        //   width += 2 * sliderWidth
-        // }
+        if (this.loop && !isResize) { // 循环且非刷新状态
+          width += 2 * sliderWidth
+        }
         this.$refs.sliderGroup.style.width = width + 'px'
       },
       _initSlider() {
@@ -59,14 +67,15 @@
           scrollY: false,
           momentum: false, // 惯性-禁止
           snap: true,
-          snapLoop: this.loop,
-          snapThreshold: 0.3,
+          snapLoop: this.loop, // 是否可以无缝循环轮播
+          snapThreshold: 0.3, // 用手指滑动时页面可切换的阈值，大于这个阈值可以滑动的下一页
           snapSpeed: 400
+          // click: true // 手机模式下，BScroll内部的实现时会阻止默认click，重新派发点击事件，而此click会被fastsclick监听，被阻止，导致页面无法跳转
         })
 
-        this.slider.on('scrollEnd', () => {
+        this.slider.on('scrollEnd', () => { // 切换到下一张时，派发事件
           let pageIndex = this.slider.getCurrentPage().pageX
-          if (this.loop) {
+          if (this.loop) { // 循环模式下，会对第1、2个元素进行拷贝
             pageIndex -= 1
           }
           this.currentPageIndex = pageIndex
@@ -78,11 +87,11 @@
 
         this.slider.on('beforeScrollStart', () => {
           if (this.loop) {
-            clearTimeout(this.timer)
+            clearTimeout(this.timer) // 避免手动拖动时，计时器到时间自动滚动
           }
         })
       },
-      initDots() {
+      _initDots() {
         this.dots = new Array(this.children.length)
       },
       _play() {
@@ -103,8 +112,8 @@
   <div class="slider-group" ref="sliderGroup">
     <slot></slot>
   </div>
-  <div lcass="dots">
-    <span class="dot" :class="{active: currentIndex === index }" v-for="(item, index) in dots"></span>
+  <div class="dots">
+    <span class="dot" :class="{active: currentPageIndex === index}" v-for="(item, index) in dots" :key="index"></span>
   </div>
 </div>
 </template>
@@ -131,24 +140,24 @@
         img
           display: block
           width: 100%
-    // .dots
-    //   position: absolute
-    //   right: 0
-    //   left:0
-    //   bottom: 12px
-    //   text-align: center
-    //   font-size: 0
-    //   .dot
-    //     display: block
-    //     margin: 0 4px
-    //     width:8px
-    //     height: 8px
-    //     border-radius: 50%
-    //     background-color: $color-text-l
-    //     &.active
-    //       width: 20px
-    //       border-radius: 5px
-    //       background-color: $color-text-l
+    .dots
+      position: absolute
+      right: 0
+      left:0
+      bottom: 12px
+      text-align: center
+      font-size: 0
+      .dot
+        display: inline-block
+        margin: 0 4px
+        width:8px
+        height: 8px
+        border-radius: 50%
+        background-color: $color-text-l
+        &.active
+          width: 20px
+          border-radius: 5px
+          background-color: $color-text-l
 
 
 

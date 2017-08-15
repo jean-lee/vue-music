@@ -31,19 +31,17 @@ export default {
 <template>
 <div class="recommend">
   <div class="recommend-content">
+    <!-- recommends.length 确保dom可以加载完成，slider的momentum不会报错 -->
     <div v-if="recommends.length" class="slider-wrapper">
         <slider>
-          <div v-for="item in recommends">
-            <a :href="item.linkUrl">
-              <img :src="item.picUrl">
-            </a>
+          <div v-for="item in recommends" :data-id="item.id">
+            <a :href="item.linkUrl"><img :src="item.picUrl"></a>
           </div>
         </slider>
     </div>
     <div class="recommend-list">
       <h1 class="list-title">热门歌单推荐</h1>
         <ul>
-
         </ul>
     </div>
   </div>
