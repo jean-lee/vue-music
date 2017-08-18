@@ -1,4 +1,5 @@
 <script>
+import ListView from 'base/listview/listview'
 import {getSingerList} from 'api/singer'
 import { ERR_OK } from 'api/config'
 import Singer from 'common/js/singer'
@@ -8,6 +9,9 @@ const HOT_SINGER_LEN = 10
 
 export default {
   name: 'singer',
+  components: {
+    ListView
+  },
   data() {
     return {
       singers: []
@@ -80,10 +84,17 @@ export default {
 </script>
 
 <template>
-<div>
-
+<div class="singer" ref="singer">
+   <list-view :data="singers" ref="list"></list-view>
 </div>
 </template>
 
 <style lang="stylus">
+@import '~common/stylus/variable'
+
+  .singer
+    position: fixed
+    top: 88px
+    bottom: 0
+    width: 100%
 </style>
