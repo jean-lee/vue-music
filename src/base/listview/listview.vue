@@ -84,6 +84,9 @@ export default {
         height += item.clientHeight
         this.listHeight.push(height)
       }
+    },
+    selectItem(item) {
+      this.$emit('select', item)
     }
   },
   watch: {
@@ -117,7 +120,6 @@ export default {
       if (this.fixedTop === fixedTop) {
         return
       }
-      console.log(newVal + '---' + fixedTop)
       this.fixedTop = fixedTop
       this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`
     }
@@ -136,7 +138,7 @@ export default {
     <li v-for="(group, index) in data" class="list-group" ref="listGroup" :data-index="index">
       <h2 class="list-group-title">{{group.title}}</h2>
       <ul>
-        <li v-for="(item, index) in group.items" class="list-group-item">
+        <li v-for="(item, index) in group.items" @click="selectItem(item)" class="list-group-item">
           <img class="avatar" v-lazy="item.avatar">
           <span class="name">{{item.name}}</span>
         </li>
@@ -153,9 +155,9 @@ export default {
   <div class="list-fixed" v-show="fixedTitle" ref="fixed">
     <h1 class="fixed-title">{{fixedTitle}}</h1>
   </div>
-  <div class="loading-container" v-show="!data.length">
+  <!-- <div class="loading-container" v-show="!data.length">
     <loading></loading>
-  </div>
+  </div> -->
 </scroll>
 </template>
 

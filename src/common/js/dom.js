@@ -46,7 +46,7 @@ export function prefixStyle(style) {
     return false
   }
 
-  if (vendor === 'standard') {
+  if (vendor === 'standard') { // 浏览器厂商都不满足
     return style
   }
 
