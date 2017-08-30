@@ -3,6 +3,7 @@ import Loading from 'base/loading/loading'
 import SongList from 'base/song-list/song-list'
 import Scroll from 'base/scroll/scroll'
 import {prefixStyle} from 'common/js/dom'
+import {mapActions} from 'vuex'
 
 const RESERVED_HEIGHT = 40
 const transform = prefixStyle('transform')
@@ -55,7 +56,16 @@ export default {
     },
     back() {
       this.$router.back()
-    }
+    },
+    selectItem(item, index) {
+      this.selectPlay({
+        list: this.songs,
+        index
+      })
+    },
+    ...mapActions([
+      'selectPlay'
+    ])
   },
   watch: {
     scrollY(newVal) {
@@ -76,7 +86,7 @@ export default {
         zIndex = 10
         this.$refs.bgImage.style.paddingTop = 0
         this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
-        this.$refs.playBtn.style.dispaly = 'none'
+        this.$refs.playBtn.style.display = 'none'
       } else {
         this.$refs.bgImage.style.paddingTop = '70%'
         this.$refs.bgImage.style.height = 0
@@ -108,7 +118,7 @@ export default {
   <scroll :data="songs" @scroll="scroll"
     :listen-scroll="listenScroll" :probe-type="probeType" class="list" ref="list">
     <div class="song-list-wrapper">
-      <song-list :songs="songs"></song-list>
+      <song-list @select="selectItem" :songs="songs"></song-list>
     </div>
     <div v-show="!songs.length" class="loading-container">
       <loading></loading>
